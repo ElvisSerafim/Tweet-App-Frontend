@@ -1,0 +1,3 @@
+interface FeedItemProps {
+  tweet: Tweet;
+}
