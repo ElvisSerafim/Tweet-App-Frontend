@@ -9,6 +9,7 @@ import {
   Dropdown,
   DropdownMenu,
   Avatar,
+  AvatarIcon,
 } from "@nextui-org/react";
 import PointsDisplay from "../PointsDisplay";
 import { usePathname } from "next/navigation";
@@ -35,11 +36,13 @@ const NavbarComponent = () => {
                 <Avatar
                   isBordered
                   as="button"
-                  className="transition-transform"
                   color="secondary"
-                  name="Jason Hughes"
-                  size="md"
-                  src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+                  size="sm"
+                  icon={<AvatarIcon />}
+                  classNames={{
+                    base: "bg-gradient-to-br from-[#FFB457] to-[#FF705B]",
+                    icon: "text-black/80",
+                  }}
                 />
               </DropdownTrigger>
               <DropdownMenu aria-label="Profile Actions" variant="flat">
@@ -61,7 +64,7 @@ const NavbarComponent = () => {
             </Dropdown>
             {!pathname.includes("campaign") && (
               <div className="flex flex-row gap-2 items-center">
-                <PointsDisplay />
+                <PointsDisplay points={10} />
               </div>
             )}
           </div>
