@@ -3,50 +3,98 @@ import FeedItem from "@/components/FeedItem";
 import { useEffect, useState } from "react";
 import Tweet from "@/components/Tweet";
 import UserPointsList from "@/components/UserPointsList";
-import { Tab, Tabs } from "@nextui-org/react";
+import { Skeleton, Tab, Tabs } from "@nextui-org/react";
 import Image from "next/image";
-import { getCampaign } from "@/services/fetchService";
+import {
+  createUserTweet,
+  getAllUsers,
+  getCampaign,
+  getTweets,
+} from "@/services/fetchService";
 import CampaignDisplay from "@/components/CampaignDisplay";
 
 export default function Home() {
-  const [tweet, setTweet] = useState<Tweet>({
-    tweetAuthorName: "Elvis Michael Souza Serafim",
-    tweetCreatedAt: "4 de abril ás 11:00",
-    tweetText:
-      "A minha conclusão de quando usar interface VS type é que Depende, o que você realmente precisa? esse tipos serão exportados publicamente? então declare usando interface. Você está declarando tipos de uma classe ou função? então declare usando interface.Essas dentre outras perguntas vai nos ajudar a decidir quando usar uma ou outra. Mas sempre de preferência para interface pois essa declaração nos da suporte melhor em caso de erro.",
-  });
-
+  const [tweets, setTweets] = useState<Tweet[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [tweetLoading, setTweetLoading] = useState(false);
   const [campaignPhrase, setCampaignPhrase] = useState<string>("");
+  const [users, setUsers] = useState<User[]>([]);
 
   const getAllTweets = async () => {
+    setTweetLoading(true);
     try {
-    } catch (error) {}
+      const response = await getTweets();
+      setTweets(response);
+    } catch (error) {
+    } finally {
+      setTweetLoading(false);
+    }
   };
 
   const getCurrentCampaign = async () => {
+    setLoading(true);
     try {
       const response = await getCampaign();
       setCampaignPhrase(response.campaignPhrase);
-    } catch (error) {}
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getUsers = async () => {
+    setLoading(true);
+    try {
+      const response = await getAllUsers();
+      setUsers(response);
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createTweet = async (payload: TweetRequest) => {
+    setTweetLoading(true);
+    try {
+      await createUserTweet(payload);
+      await getAllTweets();
+      await getUsers();
+    } catch (error) {
+    } finally {
+      setTweetLoading(false);
+    }
   };
 
   useEffect(() => {
     getAllTweets();
     getCurrentCampaign();
+    getUsers();
   }, []);
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-8">
       <div className="flex flex-col min-w-full md:min-w-[600px] max-w-[400px] gap-6 md:max-w-600px]">
-        <CampaignDisplay campaignPhrase={campaignPhrase} />
-        <Tweet />
+        <Skeleton className="rounded-lg" isLoaded={!loading}>
+          <CampaignDisplay campaignPhrase={campaignPhrase} />
+        </Skeleton>
+        <Tweet createTweet={createTweet} />
         <Tabs fullWidth variant="underlined" className="pt-6" color="primary">
           <Tab key="feed" title="Feed">
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-5">
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((item, index) => (
-                  <FeedItem key={index} tweet={tweet} />
-                ))}
+                {tweetLoading ? (
+                  <Skeleton isLoaded={!tweetLoading} className="rounded-lg">
+                    {tweets?.map((tweet) => (
+                      <FeedItem key={tweet.id} tweet={tweet} />
+                    ))}
+                  </Skeleton>
+                ) : (
+                  <>
+                    {tweets?.map((tweet) => (
+                      <FeedItem key={tweet.id} tweet={tweet} />
+                    ))}
+                  </>
+                )}
               </div>
             </div>
           </Tab>
@@ -64,7 +112,7 @@ export default function Home() {
               </div>
             }
           >
-            <UserPointsList />
+            <UserPointsList users={users} />
           </Tab>
         </Tabs>
       </div>
