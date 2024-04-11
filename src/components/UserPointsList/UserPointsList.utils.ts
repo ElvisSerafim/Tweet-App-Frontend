@@ -1,0 +1,3 @@
+interface UserPointsListProps {
+  users: User[];
+}
