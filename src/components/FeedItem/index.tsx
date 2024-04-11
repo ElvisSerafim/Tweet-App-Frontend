@@ -12,16 +12,14 @@ const FeedItem = ({ tweet }: FeedItemProps) => {
     >
       <CardHeader>
         <div className="flex flex-col px-1 gap-1 items-start justify-center">
-          <h4 className="text-lg font-bold text-white">
-            {tweet.tweetAuthorName}
-          </h4>
+          <h4 className="text-lg font-bold text-white">{tweet.user.name}</h4>
           <div>
-            <h4 className="text-light-text">{tweet.tweetCreatedAt}</h4>
+            <h4 className="text-light-text">{tweet.createdAt}</h4>
           </div>
         </div>
       </CardHeader>
       <CardBody className=" text-base text-white">
-        <p>{tweet.tweetText}</p>
+        <p>{tweet.message}</p>
       </CardBody>
     </Card>
   );
