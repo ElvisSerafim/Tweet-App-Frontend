@@ -11,7 +11,7 @@ const UserPointsItem = ({ user, position }: UserPointsItemProps) => {
         <p>{user.name}</p>
       </div>
       <div>
-        <PointsDisplay />
+        <PointsDisplay points={user.points} />
       </div>
     </div>
   );
