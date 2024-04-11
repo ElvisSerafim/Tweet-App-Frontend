@@ -1,9 +1,19 @@
 "use server";
 
-export async function getUsers() {
-  const res = fetchRequest("users/all", "GET");
+export async function getAllUsers() {
+  const response = fetchRequest("users", "GET");
+  const data = (await response).json();
+  return data;
+}
 
-  return res;
+export async function getTweets() {
+  const response = fetchRequest("tweets", "GET");
+  const data = (await response).json();
+  return data;
+}
+
+export async function createUserTweet<T>(payload: T) {
+  await fetchRequest("tweets", "POST", payload);
 }
 
 export async function getCampaign(): Promise<Campaign> {
