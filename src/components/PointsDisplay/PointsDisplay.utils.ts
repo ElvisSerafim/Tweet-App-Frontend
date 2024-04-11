@@ -1,0 +1,3 @@
+interface PointsDisplayProps {
+  points: number;
+}
